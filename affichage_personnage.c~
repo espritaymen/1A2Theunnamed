@@ -1,0 +1,20 @@
+#include "jeux.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <SDL/SDL.h>
+#include <SDL/SDL_image.h>
+#include <SDL/SDL_mixer.h>
+#include <SDL/SDL_ttf.h>
+
+void Afficher_Personnage (hero ezdin[] , SDL_Surface *ecran)
+{
+	
+SDL_BlitSurface(ezdin[0].affichage_hero,&ezdin[0].frame,ecran,&ezdin[0].position_hero);
+SDL_BlitSurface(ezdin[0].affichage_vie,NULL,ecran,&ezdin[0].position_vie);
+
+SDL_BlitSurface(ezdin[1].affichage_hero,&ezdin[1].frame,ecran,&ezdin[1].position_hero);
+SDL_BlitSurface(ezdin[1].affichage_vie,NULL,ecran,&ezdin[1].position_vie);
+
+}
+
+
