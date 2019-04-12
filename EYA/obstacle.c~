@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include "SDL/SDL.h"
+#include "SDL/SDL_image.h"
+#include "SDL/SDL_mixer.h"
+int main( int argc, char* args[] )
+{
+    //The images
+    SDL_Surface* obs = NULL;
+    SDL_Surface* screen = NULL;
+//Start SDL
+    SDL_Init( SDL_INIT_EVERYTHING );
+
+    //Set up screen
+    screen = SDL_SetVideoMode( 640, 480, 32, SDL_SWSURFACE );
+
+    //Load image
+    obs = SDL_LoadBMP( "ap.png" );
+//Apply image to screen
+    SDL_BlitSurface( obs, NULL, screen, NULL );
+
+    //Update Screen
+    SDL_Flip( screen );
+
+    //Pause
+    SDL_Delay( 2000 );
+//Free the loaded image
+    SDL_FreeSurface( obs );
+
+    //Quit SDL
+    SDL_Quit();
+
+    return 0;
+}

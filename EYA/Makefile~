@@ -1,0 +1,9 @@
+prog : anima.o depla.o enemy.o 
+	gcc anima.o depla.o enemy.o -o prog -lSDL -lSDL_image -lSDL_mixer 
+main : anima.o
+	gcc -c anima.c
+enemy.o: enemy.c
+	gcc -c enemy.c
+depla.o: depla.c
+	gcc -c depla.c
+

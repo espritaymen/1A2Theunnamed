@@ -1,0 +1,135 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <SDL/SDL.h>
+#include <math.h>
+#include <time.h>
+#include <SDL/SDL_image.h>
+#include <SDL/SDL_mixer.h>
+#include <SDL/SDL_ttf.h>
+#include <string.h>
+#include "jeux.h"
+#include "initialiser.c"
+#include "afficher.c"
+#include "animation.c"
+#include "deplacement_aleatoire.c"
+
+int main()
+{
+int run=1;
+int num ;
+int x ;
+int n=4,affichage=1,press_p=0;
+int ka=0 , coli;
+int c=-1,clique ;
+SDL_Surface *ecran=NULL   ;
+
+
+
+SDL_Rect position;
+
+
+SDL_Event event;
+
+paroles parole;
+
+entite_secondaire entite[4];
+
+SDL_Init(SDL_INIT_EVERYTHING);
+
+TTF_Init();
+
+ecran=SDL_SetVideoMode(1200,800,32,SDL_HWSURFACE|SDL_RESIZABLE);
+
+
+
+initialiser_entite_secondaire (entite,n) ;
+
+position_entite_sur_map (entite);
+
+
+
+int e ;
+
+
+
+ 
+while (run)
+
+{
+
+
+
+
+
+
+		SDL_PollEvent (&event);
+
+		switch(event.type)
+		{
+			case SDL_QUIT:
+			run=0;
+			break;
+
+
+SDL_Flip(ecran) ;
+}
+
+
+
+
+
+	deplacement_entite_x (&entite[1]);
+
+ animation_entite (&entite[1] ) ;
+ afficher_entite_secondaire (entite[1], ecran) ;
+SDL_Flip(ecran) ;
+
+
+
+
+
+}
+
+
+//3
+
+//hajra
+	deplacement_entite_x (&entite[2]);
+	printf("%d\n", entite[2].position_entite.x );
+	
+
+
+ animation_entite (&entite[2] ) ;
+ afficher_entite_secondaire (entite[2], ecran) ;
+
+
+
+
+}
+
+
+
+
+
+
+
+
+}
+
+
+
+SDL_FreeSurface(entite[1].affichage_secondaire);
+SDL_FreeSurface(entite[2].affichage_secondaire);
+TTF_CloseFont(temp.police);
+TTF_Quit();
+SDL_Quit();
+
+
+
+
+
+
+return (0);
+
+}
+
