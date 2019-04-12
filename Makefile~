@@ -1,0 +1,10 @@
+all: Menu.o fonctions.o 
+	gcc  Menu.o fonctions.o -o teste -lSDL -lSDL_image -lSDL_mixer 
+Menu.o: Menu.c 
+	gcc -c Menu.c 
+fonctions.o:fonctions.c 
+	gcc -c fonctions.c  
+
+
+
+

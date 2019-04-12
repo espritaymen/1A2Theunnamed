@@ -7,7 +7,7 @@
 #include <SDL/SDL_image.h>
 #include <SDL/SDL_mixer.h>
 #include "deplac.h"
-#include "ennemi.h"
+
 
 
 void initialisation(Acteurs* acteurs, SDL_Rect* camera, SDL_Rect* frame)
@@ -50,7 +50,7 @@ hero->etat = IMMOBILE;
 
 /* Coordonnées de démarrage de notre héros */
 hero->x = 48 ;
-hero->y = 450 ;
+hero->y = 250 ;
 hero->Ysaut = 0;
 }
 
@@ -188,25 +188,36 @@ void updatePlayer(Hero* hero , Acteurs* acteurs, SDL_Rect camera, SDL_Rect* fram
   //centerScrollingOnPlayer(*hero, acteurs, &camera);
 
 }
-/*void init_ennemi(ennemi *e)
+
+
+
+/*void initializeEnemy(Enemy* enemy)
 {
+	SDL_Surface* tmp;
 
-	e->position.x = 100;
-	e->position.y = 0;
-	e->vie=1;
-	e.image = IMG_Load("ennemi.png");
-	SDL_Surface *screen = NULL;
-	screen = SDL_SetVideoMode(800,600,32,SDL_HWSURFACE | SDL_DOUBLEBUF);
+	tmp = SDL_LoadBMP("sprite_enemy_right.bmp");
+	enemy->sprite = SDL_DisplayFormat(tmp);
+	SDL_FreeSurface(tmp);
+	SDL_SetColorKey(enemy->sprite, SDL_SRCCOLORKEY, SDL_MapRGB(enemy->sprite->format, 255, 255, 255));
 
-	SDL_BlitSurface(e.image, NULL, screen, e->position);
-	SDL_Flip(screen); 
-	
 
-}*/
+	//Indique l'état et la direction de notre enemy
+	enemy->direction = RIGHT;
+	enemy->etat = IMMOBILE;
+
+	//Réinitialise le timer de l'animation et la frame
+	enemy->frame_timer = TIME_BETWEEN_2_FRAMES;
+	enemy->frame_number = 0;
+
+	//Coordonnées de démarrage de notre enemies 
+	enemy->x = 0 ;
+	enemy->y = 0 ;
+
+}
 
 //---fontion pour afficher l'enemy ---
 
-/*void drawEnemy(Enemy enemy , Acteurs *acteurs)
+void drawEnemy(Enemy enemy , Acteurs *acteurs)
 {
 
 // Rectangle de destination à blitter 
@@ -216,7 +227,7 @@ dest.y = enemy.y ;
 
 SDL_Rect frame;
 frame.x = enemy.frame_number*ENEMY_Width;
-frame.y = 450;
+frame.y = 0;
 frame.w = ENEMY_Width;
 frame.h = ENEMY_Height;
 
@@ -241,3 +252,187 @@ void animationEnemy(Enemy* enemy, Acteurs acteurs)
 		SDL_Delay(15);	
 	
 }*/
+SDL_Rect AnimationHero(Hero hero)
+{
+  int i;
+  SDL_Rect frame;
+
+    if(hero.etat == WALK_RIGHT)
+    {
+      i = 0;
+        while(i<MAXF)
+        {
+          frame.x = i*PLAYER_WIDTH;
+          frame.y = 0;
+          frame.w = PLAYER_WIDTH;
+          frame.h = PLAYER_HEIGHT;
+          i++;
+        }
+      if(i = MAXF-1)
+        i = 0;
+    }
+    else if(hero.etat == WALK_LEFT)
+    {
+      i = MAXF-1;
+      while(i>=0)
+        {
+          frame.x = i*PLAYER_WIDTH;
+          frame.y = 0;
+          frame.w = PLAYER_WIDTH;
+          frame.h = PLAYER_HEIGHT;
+          i--;
+        }
+      if(i < 0)
+        i = MAXF-1;
+    }
+    else if(hero.etat == IMMOBILE)
+    {
+      if(hero.direction == RIGHT)
+      {
+
+        frame.x = 0;
+        frame.y = 0;
+        frame.w = PLAYER_WIDTH;
+        frame.h = PLAYER_HEIGHT;
+      }
+      else if(hero.direction == LEFT)
+      {
+        frame.x = MAXF-1;
+        frame.y = 0;
+        frame.w = PLAYER_WIDTH;
+        frame.h = PLAYER_HEIGHT;
+      }
+    }
+  return frame;
+}
+
+/*SDL_Rect AnimationHeroRight(Hero hero, Acteurs acteurs)
+{
+  int i;
+  SDL_Rect FrameRight;
+  if(acteurs.event.type == SDL_KEYDOWN)
+  {
+    if(acteurs.event.key.keysym.sym == SDLK_RIGHT)
+    {
+        for(i=0; i<MAXF; i++)
+        {
+          FrameRight.x = i*PLAYER_WIDTH;
+          FrameRight.y = 0;
+          FrameRight.w = PLAYER_WIDTH;
+          FrameRight.h = PLAYER_HEIGHT;
+        }
+    }
+  }
+  return FrameRight;
+}
+
+
+SDL_Rect AnimationHeroLeft(Hero hero, Acteurs acteurs)
+{
+  int i;
+  SDL_Rect FrameLeft;
+  if(acteurs.event.type == SDL_KEYDOWN)
+  {
+    if(acteurs.event.key.keysym.sym == SDLK_LEFT)
+    {
+        for(i=(MAXF-1); i>=0; i--)
+        {
+          FrameLeft.x = i*PLAYER_WIDTH;
+          FrameLeft.y = 0;
+          FrameLeft.w = PLAYER_WIDTH;
+          FrameLeft.h = PLAYER_HEIGHT;
+        }
+    }
+  }
+  return FrameLeft;
+}*/
+int collision(Hero *hero,Enemy* enemy)
+{ 
+//on teste pour voir s'il n'ya pas collision ,si c'est le cas , on revoie 0
+if((hero->x >= enemy ->x + enemy-> w)||(hero->x + hero-> w >= enemy ->x)||(hero->y >= enemy ->y + enemy->h)||(hero->y + hero-> h >= enemy ->y))
+return 0;
+// si non,il y'a collision ,si le joueur est au dessus du enemy(avec une marge
+//de 10 pixel pour eviter les frustrations dues au pixel perfect),on devra alors tuer l'enemy et on fera rebondir le joueur
+else if(hero->y + hero->h <= enemy -> y +10)
+{
+hero -> direction  = -JUMP_HEIGHT;
+return 2;
+}
+//
+return 1;
+} 
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <SDL/SDL.h>
+#include <SDL/SDL_image.h>
+#include <SDL/SDL_mixer.h>
+#include "deplac.h"
+
+
+int main(int argc, char const *argv[])
+{
+
+  Acteurs acteurs;
+  Boutons boutons;
+  Hero hero ;
+  SDL_Rect camera;
+  SDL_Rect frame;
+
+
+   //initialisations
+    if( SDL_Init( SDL_INIT_EVERYTHING ) == -1 )
+    {
+        return 1;
+    }
+
+
+/* appel des fonctions */
+#include "deplac.h"
+
+acteurs.screen= SDL_SetVideoMode(1080,400,32,SDL_HWSURFACE | SDL_DOUBLEBUF);
+SDL_WM_SetCaption( "Tunisia", NULL );
+
+    initializeHero(&hero);
+    initialisation(&acteurs, &camera, &frame);
+    /*SDL_BlitSurface(backg,NULL , acteurs.screen, &camera);
+    SDL_Flip(acteurs.screen);*/
+
+    drawHero(hero, acteurs, camera, frame);
+
+int carryon = 1;
+while(carryon)
+{
+    SDL_PollEvent(&acteurs.event);
+    updatePlayer(&hero , &acteurs, camera, &frame) ;
+    frame = AnimationHero(hero);
+    centerScrollingOnPlayer(hero, &acteurs, &camera);
+    drawHero(hero , acteurs, camera, frame) ;
+
+  switch(acteurs.event.type)
+  {
+    case SDL_QUIT:
+             carryon = 0;
+      case SDL_KEYDOWN:
+      if(acteurs.event.key.keysym.sym == SDLK_ESCAPE)
+        {
+          carryon= 0;
+        }
+      break;
+
+  }
+
+
+}
+
+    //LIB
+  SDL_Quit();
+  return 0 ;
+
+}
+
+
+
+
+
+

@@ -5,6 +5,7 @@
 #define PLAYER_WIDTH 100
 #define PLAYER_HEIGHT 200
 #define PLAYER_SPEED 10
+#define JUMP_HEIGHT 80
 #define TIME_BETWEEN_2_FRAMES 8
 #define Collision_droite 20
 #define Collision_gauche 30
@@ -18,10 +19,6 @@ enum{WALK_RIGHT, WALK_LEFT, IMMOBILE, JUMP};
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
 #include <SDL/SDL_mixer.h>
-/*#include "aide.h"
-#include "score.h"
-#include "vie.h"
-#include "enig.h"*/
 
 #define RIGHT 1
 #define LEFT 2
@@ -30,7 +27,7 @@ enum{WALK_RIGHT, WALK_LEFT, IMMOBILE, JUMP};
 #define ENEMY_Width 80
 #define Backg_W 8000
 #define Backg_H 600
-#define MAXF_ENEMY 200
+
 #define MAXF 3
 
 
@@ -47,13 +44,25 @@ struct Acteurs
 	//fond
 	SDL_Surface *fond ;
 	SDL_Rect posFond;
-        
+
   //fond noir
   SDL_Surface* backg;
-   SDL_Rect camera;
 };
 
+typedef struct Enemy
+{
+ 
+SDL_Surface *sprite;
 
+/* Coordonnées de l'enemy */
+int x , y ;
+
+/* Variables utiles pour l'animation */
+int frame_timer, frame_number;
+int etat  , direction ; 
+int w,h;
+
+}Enemy;
 
 /*_________   structure numero 2  ____________ */
 
@@ -84,10 +93,11 @@ SDL_Surface *sprite;
 /* Coordonnées du héros */
 int x , y ;
 int w , h ;
+int Ysaut;
 /* Variables utiles pour l'animation */
 int frame_timer, frame_number;
 int etat  , direction ;
-int Ysaut;
+
 float x1 , x2 , x3 , x4 , x5 , x6 , x7 , x8 , x9 , x10 , x11 , x12  ;  //points de verification de collision parfaite 
 float y1 , y2 , y3 , y4 , y5 , y6 , y7 , y8 , y9 , y10 , y11 , y12  ;  // points de verification de collision parfaite 
 };
@@ -107,13 +117,21 @@ SDL_Rect AnimationHero(Hero hero);
  //SDL_Rect AnimationHeroRight(Hero hero, Acteurs acteurs);
 
 //SDL_Rect AnimationHeroLeft(Hero hero, Acteurs acteurs);
+SDL_Color GetPixel (SDL_Surface *pSurface , int x , int y) ;
 
+void update_points_de_collision(Hero* hero);
 
-// void init_ennemi(Ennemi *enemy)
+void initializeEnemy(Enemy* enemy) ;
 
-//void drawEnemy(Enemy enemy , Acteurs *acteurs) ;
+void drawEnemy(Enemy enemy , Acteurs *acteurs) ;
 
-//void animationEnemy(Enemy* enemy, Acteurs acteurs) ;
+void animationEnemy(Enemy* enemy, Acteurs acteurs) ;
 
+int verification_collision_player_map_droite(Acteurs* acteurs , Hero* hero);
 
+int verification_collision_player_map_gauche(Acteurs* acteurs , Hero* hero);
+
+int verification_collision_player_map_top(Acteurs* acteurs , Hero* hero);
+
+int verification_collision_player_map_bas(Acteurs* acteurs , Hero* hero);
 #endif /* FONCTIONS_H_ */

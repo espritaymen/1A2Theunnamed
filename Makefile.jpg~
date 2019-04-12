@@ -1,0 +1,9 @@
+all : enigme.o enigma.o 
+	gcc  enigme.o enigma.o -o prog -lSDL -lSDL_image
+
+
+enigme.o: enigme.c
+	gcc -c enigme.c
+enigma.o: enigma.c
+	gcc -c enigma.c
+
